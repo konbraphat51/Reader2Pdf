@@ -16,6 +16,14 @@ class ScreenCapturer(Protocol):
         """Returns the pixels inside rect, in physical screen pixels."""
         ...
 
+    def virtual_screen(self) -> Rect:
+        """Returns the bounding rect of all monitors combined."""
+        ...
+
+    def monitors(self) -> list[Rect]:
+        """Returns the rect of each individual monitor."""
+        ...
+
 
 class MssCapturer:
     """ScreenCapturer backed by mss; safe to call from any thread."""
@@ -34,3 +42,9 @@ class MssCapturer:
         with mss.MSS() as sct:
             monitor = sct.monitors[0]
         return Rect(monitor["left"], monitor["top"], monitor["width"], monitor["height"])
+
+    def monitors(self) -> list[Rect]:
+        """Returns the rect of each individual monitor."""
+        with mss.MSS() as sct:
+            monitors = sct.monitors[1:]
+        return [Rect(m["left"], m["top"], m["width"], m["height"]) for m in monitors]
