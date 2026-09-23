@@ -12,8 +12,13 @@ class Language(Enum):
 
 _MESSAGES: dict[str, dict[Language, str]] = {
     "select_hint": {
-        Language.EN: "Drag to select the capture region ({paper} {orientation}). Esc to cancel.",
-        Language.JA: "ドラッグで撮影範囲を選択 ({paper} {orientation})。Escでキャンセル。",
+        Language.EN: (
+            "Drag to select the capture region: {paper} {orientation}"
+            "   [P] paper  [O] orientation  [Esc] cancel"
+        ),
+        Language.JA: (
+            "ドラッグで撮影範囲を選択: {paper} {orientation}   [P] 用紙  [O] 向き  [Esc] キャンセル"
+        ),
     },
     "portrait": {Language.EN: "portrait", Language.JA: "縦"},
     "landscape": {Language.EN: "landscape", Language.JA: "横"},
