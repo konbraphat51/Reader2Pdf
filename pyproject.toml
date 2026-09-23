@@ -1,0 +1,52 @@
+[project]
+name = "reader2pdf"
+version = "0.1.0"
+description = "Capture pages of a PDF reader by clicking and bundle the screenshots into a PDF."
+readme = "README.md"
+authors = [
+    { name = "konbraphat", email = "konbraphat@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "mss>=10.2.0",
+    "pillow>=12.3.0",
+    "pynput>=1.8.2",
+]
+
+[project.scripts]
+reader2pdf = "reader2pdf.__main__:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "mypy>=2.3.1",
+    "pytest>=9.1.1",
+    "ruff>=0.16.8",
+    "types-pynput>=1.8.1.20260712",
+]
+
+[tool.mypy]
+strict = true
+python_version = "3.12"
+mypy_path = "src"
+
+[[tool.mypy.overrides]]
+module = ["mss", "mss.*"]
+ignore_missing_imports = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "N", "SIM", "RUF", "D"]
+ignore = ["D203", "D213", "D105", "D107"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["D"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
