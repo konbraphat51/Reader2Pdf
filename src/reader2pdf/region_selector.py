@@ -13,6 +13,7 @@ _OUTLINE_COLOR = "#ff3030"
 _HINT_COLOR = "#ffffff"
 _DIM_FACTOR = 0.45
 _MIN_SIZE_PX = 20
+_HINT_TAG = "hint"
 
 
 @dataclass(frozen=True)
@@ -35,6 +36,7 @@ class RegionSelector:
         root: tk.Tk,
         translate: Translator,
         screen: Rect,
+        monitors: list[Rect],
         screenshot: Image,
         paper: PaperSize,
         orientation: Orientation,
@@ -42,6 +44,7 @@ class RegionSelector:
         self._root = root
         self._t = translate
         self._screen = screen
+        self._monitors = monitors
         self._screenshot = screenshot
         self._paper = paper
         self._orientation = orientation
@@ -63,9 +66,15 @@ class RegionSelector:
         photo = ImageTk.PhotoImage(dimmed)
         canvas.create_image(0, 0, anchor=tk.NW, image=photo)
         self._outline = canvas.create_rectangle(0, 0, 0, 0, outline=_OUTLINE_COLOR, width=2)
-        self._hint = canvas.create_text(
-            s.width // 2, 30, fill=_HINT_COLOR, font=("Segoe UI", 16, "bold")
-        )
+        # one hint per monitor so it is visible wherever the user looks
+        for monitor in self._monitors:
+            canvas.create_text(
+                monitor.left - s.left + monitor.width // 2,
+                monitor.top - s.top + 30,
+                fill=_HINT_COLOR,
+                font=("Segoe UI", 16, "bold"),
+                tags=_HINT_TAG,
+            )
         self._canvas = canvas
         self._window = window
         self._refresh_hint()
@@ -124,7 +133,7 @@ class RegionSelector:
         text = self._t(
             "select_hint", paper=self._paper.name, orientation=self._t(self._orientation.value)
         )
-        self._canvas.itemconfigure(self._hint, text=text)
+        self._canvas.itemconfigure(_HINT_TAG, text=text)
 
     def _redraw_outline(self) -> None:
         rect = self._current
